@@ -1,0 +1,82 @@
+* SPDX-License-Identifier: MPL-2.0
+* Independent description of rondoval's public PCI ABI; implementation is separate.
+==id $Id: pcie.sfd 1.0.0 $
+==base _PCIEBase
+==basetype struct Library *
+==libname pcie.library
+==bias 30
+==public
+==include <exec/types.h>
+==include <exec/interrupts.h>
+==include <utility/tagitem.h>
+==include <utility/hooks.h>
+==include <libraries/openpci.h>
+==include <libraries/bcmpcie_errors.h>
+UWORD pci_bus(void) ()
+UBYTE pci_inb(APTR address) (A0)
+void pci_outb(UBYTE value, APTR address) (D0,A0)
+UWORD pci_inw(APTR address) (A0)
+void pci_outw(UWORD value, APTR address) (D0,A0)
+ULONG pci_inl(APTR address) (A0)
+void pci_outl(ULONG value, APTR address) (D0,A0)
+void pci_to_hostcpy(APTR pcisrc, APTR dest, ULONG size) (A0,A1,D0)
+void host_to_pcicpy(APTR src, APTR pcidest, ULONG size) (A0,A1,D0)
+void pci_to_pcicpy(APTR pcisrc, APTR pcidest, ULONG size) (A0,A1,D0)
+struct pci_dev *pci_find_device(UWORD vendor, UWORD device, struct pci_dev *prev) (D0,D1,A0)
+struct pci_dev *pci_find_class(ULONG devclass, struct pci_dev *prev) (D0,A0)
+struct pci_dev *pci_find_slot(UBYTE bus, ULONG devfn) (D0,D1)
+UBYTE pci_read_config_byte(UBYTE reg, struct pci_dev *dev) (D0,A0)
+UWORD pci_read_config_word(UBYTE reg, struct pci_dev *dev) (D0,A0)
+ULONG pci_read_config_long(UBYTE reg, struct pci_dev *dev) (D0,A0)
+void pci_write_config_byte(UBYTE reg, UBYTE value, struct pci_dev *dev) (D0,D1,A0)
+void pci_write_config_word(UBYTE reg, UWORD value, struct pci_dev *dev) (D0,D1,A0)
+void pci_write_config_long(UBYTE reg, ULONG value, struct pci_dev *dev) (D0,D1,A0)
+BOOL pci_set_master(struct pci_dev *dev) (A0)
+BOOL pci_add_intserver(struct Interrupt *interrupt, struct pci_dev *dev) (A0,A1)
+void pci_rem_intserver(struct Interrupt *interrupt, struct pci_dev *dev) (A0,A1)
+APTR pci_allocdma_mem(ULONG size, ULONG flags) (D0,D1)
+void pci_freedma_mem(APTR buffer, ULONG size) (A0,D0)
+APTR pci_logic_to_physic_addr(APTR address, struct pci_dev *dev) (A0,A1)
+APTR pci_physic_to_logic_addr(APTR address, struct pci_dev *dev) (A0,A1)
+BOOL pci_obtain_card(struct pci_dev *dev) (A0)
+void pci_release_card(struct pci_dev *dev) (A0)
+==private
+ULONG pcie_private(void) ()
+==public
+struct pci_dev *FindBoardA(struct pci_dev *prev, struct TagItem *tags) (A0,A1)
+==varargs
+struct pci_dev *FindBoard(struct pci_dev *prev, Tag first_tag, ...) (A0,A1)
+ULONG GetBoardAttrsA(struct pci_dev *dev, struct TagItem *tags) (A0,A1)
+==varargs
+ULONG GetBoardAttrs(struct pci_dev *dev, Tag first_tag, ...) (A0,A1)
+BOOL SetBoardAttrsA(struct pci_dev *dev, struct TagItem *tags) (A0,A1)
+==varargs
+BOOL SetBoardAttrs(struct pci_dev *dev, Tag first_tag, ...) (A0,A1)
+APTR AllocateDMAMemoryForBoard(struct pci_dev *dev, ULONG size, ULONG flags) (A0,D0,D1)
+void ReleaseDMAMemoryForBoard(struct pci_dev *dev, APTR memory, ULONG size) (A0,A1,D0)
+BOOL AddMemoryHandlerForBoard(struct pci_dev *dev, struct Hook *hook, BYTE priority) (A0,A1,D0)
+BOOL RemMemoryHandlerForBoard(struct pci_dev *dev, struct Hook *hook) (A0,A1)
+APTR ObtainPCIRegion(struct pci_dev *dev, ULONG region, ULONG size) (A0,A1,D0)
+void ReleasePCIRegion(struct pci_dev *dev, APTR address) (A0,A1)
+ULONG FindCapability(struct pci_dev *dev, UBYTE capability) (A0,D0)
+ULONG FindExtCapability(struct pci_dev *dev, UWORD capability) (A0,D0)
+LONG EnableMSI(struct pci_dev *dev) (A0)
+void DisableMSI(struct pci_dev *dev) (A0)
+LONG FLR(struct pci_dev *dev) (A0)
+UBYTE ReadExtConfigByte(ULONG reg, struct pci_dev *dev) (D0,A0)
+UWORD ReadExtConfigWord(ULONG reg, struct pci_dev *dev) (D0,A0)
+ULONG ReadExtConfigLong(ULONG reg, struct pci_dev *dev) (D0,A0)
+void WriteExtConfigByte(ULONG reg, UBYTE value, struct pci_dev *dev) (D0,D1,A0)
+void WriteExtConfigWord(ULONG reg, UWORD value, struct pci_dev *dev) (D0,D1,A0)
+void WriteExtConfigLong(ULONG reg, ULONG value, struct pci_dev *dev) (D0,D1,A0)
+void MaskMSI(struct pci_dev *dev) (A0)
+void UnmaskMSI(struct pci_dev *dev) (A0)
+BOOL CheckSetINTxMask(struct pci_dev *dev, BOOL mask) (A0,D0)
+LONG AllocIntVectors(struct pci_dev *dev, ULONG minimum, ULONG maximum, ULONG flags) (A0,D0,D1,D2)
+void FreeIntVectors(struct pci_dev *dev) (A0)
+LONG AddIntVectorServer(struct pci_dev *dev, ULONG vector, struct Interrupt *interrupt) (A0,D0,A1)
+void RemIntVectorServer(struct pci_dev *dev, ULONG vector, struct Interrupt *interrupt) (A0,D0,A1)
+BOOL MaskIntVector(struct pci_dev *dev, ULONG vector) (A0,D0)
+BOOL UnmaskIntVector(struct pci_dev *dev, ULONG vector) (A0,D0)
+ULONG GetIntVectorType(struct pci_dev *dev) (A0)
+==end
